@@ -88,3 +88,34 @@ button {
   width: 3.7%;
   visibility: hidden;
 }
+
+.keyboard__arrow {
+  vertical-align: top;
+}
+
+.key__arrow {
+  border: solid black;
+  border-width: 0 4px 4px 0;
+  display: inline-block;
+  padding: 5px;
+}
+
+.key__arrow_up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.key__arrow_right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.key__arrow_left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.key__arrow_down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
