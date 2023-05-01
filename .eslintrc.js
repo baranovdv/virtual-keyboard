@@ -9,8 +9,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    // 'no-param-reassign': ['error', { props: false }],
     'import/extensions': 'off',
-    //  'no-param-reassign': [ error, { props: true } ],
   },
 };
