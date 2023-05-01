@@ -1,6 +1,6 @@
-import { CssClasses, KeyboardConst } from "./consts.js";
+import { CssClasses, KeyboardConst } from './consts.js';
 
-export const Keyboard = {
+const Keyboard = {
   elements: {
     wrapper: null,
     keyboardContainer: null,
@@ -20,7 +20,7 @@ export const Keyboard = {
   keysLayouts: {
     en: ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'delete',
       'tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
-      'capslock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "\'", 'return',
+      'capslock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'return',
       'shift-l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'au', 'shift-r',
       'control', 'option', 'command', 'space', 'command', 'option', 'al', 'ad', 'ar', ' '],
     ru: ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'delete',
@@ -79,11 +79,8 @@ export const Keyboard = {
   },
 
   init() {
-    console.log(this.output.lang);
     this.createKeyboard(this.output.lang);
-
     this.createWrapper();
-
     document.body.appendChild(this.elements.wrapper);
 
     this.elements.keys = this.elements.keyboardContainer.querySelectorAll('.keyboard__key');
@@ -104,7 +101,6 @@ export const Keyboard = {
   createWrapper() {
     this.elements.wrapper = document.createElement('div');
     this.elements.wrapper.classList.add(CssClasses.WRAPPER);
-
     this.elements.wrapper.appendChild(this.createHeader());
     this.elements.wrapper.appendChild(this.createMain());
   },
@@ -136,16 +132,16 @@ export const Keyboard = {
     const textarea = document.createElement('textarea');
     textarea.setAttribute('rows', '3');
     textarea.setAttribute('value', '');
-    textarea.setAttribute('autofocus','');
+    textarea.setAttribute('autofocus', '');
     textarea.classList.add(CssClasses.TEXTAREA);
     return textarea;
   },
 
   createKeyboard(lang) {
     const lineShift = ['delete', '\\', 'return', 'shift-r', 'ё'];
+
     this.elements.keyboardContainer = document.createElement('section');
     this.elements.keyboardContainer.classList.add(CssClasses.KEYBOARD);
-
     this.keysLayouts[lang].forEach((key) => {
       this.elements.keyboardContainer.appendChild(this.createKey(key));
       if (lineShift.includes(key)) {
@@ -165,7 +161,7 @@ export const Keyboard = {
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
         keyElement.addEventListener('click', () => {
-          if(this.output.shift) {
+          if (this.output.shift) {
             this.output.textarea.selectionStart = 0;
           } else {
             this.output.textarea.selectionEnd = 0;
@@ -180,12 +176,16 @@ export const Keyboard = {
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
         keyElement.addEventListener('click', () => {
-          if(this.output.shift) {
-            this.output.textarea.selectionStart > 0 ? this.output.textarea.selectionStart-- : this.output.textarea.selectionStart = 0;
-          } else {
-              this.output.textarea.selectionEnd = this.output.textarea.selectionStart;
-              this.output.textarea.selectionEnd > 0 ? this.output.textarea.selectionEnd-- : this.output.textarea.selectionEnd = 0;
+          if (this.output.shift) {
+            if (this.output.textarea.selectionStart > 0) {
+              this.output.textarea.selectionStart -= 1;
             }
+          } else {
+            this.output.textarea.selectionEnd = this.output.textarea.selectionStart;
+            if (this.output.textarea.selectionEnd > 0) {
+              this.output.textarea.selectionEnd -= 1;
+            }
+          }
           this.output.textarea.focus();
         });
         break;
@@ -196,12 +196,16 @@ export const Keyboard = {
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
         keyElement.addEventListener('click', () => {
-          if(this.output.shift) {
-            this.output.textarea.selectionEnd < this.output.textarea.value.length ? this.output.textarea.selectionEnd++ : this.output.textarea.selectionEnd = this.output.textarea.value.length;
-          } else {
-              this.output.textarea.selectionStart = this.output.textarea.selectionEnd;
-              this.output.textarea.selectionStart < this.output.textarea.value.length ? this.output.textarea.selectionStart++ : this.output.textarea.selectionStart = this.output.textarea.value.length;
+          if (this.output.shift) {
+            if (this.output.textarea.selectionEnd < this.output.textarea.value.length) {
+              this.output.textarea.selectionEnd += 1;
             }
+          } else {
+            this.output.textarea.selectionStart = this.output.textarea.selectionEnd;
+            if (this.output.textarea.selectionStart < this.output.textarea.value.length) {
+              this.output.textarea.selectionStart += 1;
+            }
+          }
           this.output.textarea.focus();
         });
         break;
@@ -212,7 +216,7 @@ export const Keyboard = {
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
         keyElement.addEventListener('click', () => {
-          if(this.output.shift) {
+          if (this.output.shift) {
             this.output.textarea.selectionEnd = this.output.textarea.value.length;
           } else {
             this.output.textarea.selectionStart = this.output.textarea.value.length;
@@ -323,73 +327,75 @@ export const Keyboard = {
   },
 
   enumKeys() {
-    for (let key of this.elements.keys) {
+    Array.from(this.elements.keys).forEach((key) => {
       key.classList.add(this.keyCodes[Array.from(this.elements.keys).indexOf(key)]);
-    }
+    });
   },
 
   toggleCaps() {
     this.output.caps = !this.output.caps;
     this.elements.keyboardContainer.querySelector(`.${CssClasses.KEY_CAPS}`).classList.toggle('on');
-    for (let key of this.elements.keys) {
+    Array.from(this.elements.keys).forEach((key) => {
       if (key.textContent.length === 1) {
-        key.textContent = this.output.caps ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+        const buf = key;
+        buf.textContent = this.output.caps
+          ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
       }
-    }
+    });
   },
 
   toggleShift() {
     this.output.shift = !this.output.shift;
     this.output.caps = !this.output.caps;
-
-    for (let key of this.elements.keys) {
+    Array.from(this.elements.keys).forEach((key) => {
       if (key.textContent.length === 1) {
-        key.textContent = this.output.caps ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
-
+        const buf = key;
+        buf.textContent = this.output.caps
+          ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
         if (this.output.shift) {
           if (Object.keys(this.shiftLayout[this.output.lang]).includes(key.textContent)) {
-            key.textContent = this.shiftLayout[this.output.lang][key.textContent];
+            const buf2 = key;
+            buf2.textContent = this.shiftLayout[this.output.lang][key.textContent];
           }
         }
-
         if (!this.output.shift) {
           if (Object.values(this.shiftLayout[this.output.lang]).includes(key.textContent)) {
-            for (const k in this.shiftLayout[this.output.lang]) {
+            Object.keys(this.shiftLayout[this.output.lang]).forEach((k) => {
               if (this.shiftLayout[this.output.lang][k] === key.textContent) {
-                key.textContent = k;
-                break;
+                const buf2 = key;
+                buf2.textContent = k;
               }
-            }
+            });
           }
         }
       }
-    }
+    });
   },
 
   inputData(data) {
     let string = this.output.textarea.value;
-    let start = this.output.textarea.selectionStart;
-    let end = this.output.textarea.selectionEnd;
+    const start = this.output.textarea.selectionStart;
+    const end = this.output.textarea.selectionEnd;
 
-    string = string.slice(0,start) + data + string.slice(end); 
+    string = string.slice(0, start) + data + string.slice(end);
     this.output.textarea.value = string;
     this.output.textarea.selectionStart = start + data.length;
-    this.output.textarea.selectionEnd = start === end ? end + data.length : this.output.textarea.selectionStart;
-    
+    this.output.textarea.selectionEnd = start === end
+      ? end + data.length : this.output.textarea.selectionStart;
   },
 
   deleteData() {
     let string = this.output.textarea.value;
-    let start = this.output.textarea.selectionStart;
-    let end = this.output.textarea.selectionEnd;
+    const start = this.output.textarea.selectionStart;
+    const end = this.output.textarea.selectionEnd;
 
-    if(start === end) {
-      string = string.slice(0,start-1) + string.slice(end);
+    if (start === end) {
+      string = string.slice(0, start - 1) + string.slice(end);
       this.output.textarea.value = string;
       this.output.textarea.selectionStart = start - 1;
       this.output.textarea.selectionEnd = end - 1;
     } else {
-      string = string.slice(0,start) + string.slice(end);
+      string = string.slice(0, start) + string.slice(end);
       this.output.textarea.value = string;
       this.output.textarea.selectionStart = start;
       this.output.textarea.selectionEnd = end - (end - start);
@@ -397,32 +403,30 @@ export const Keyboard = {
   },
 
   physicalKeyDown(keyCode) {
-    this.output.pressedButton = Array.from(this.elements.keys).find((keyElement) => keyElement.classList.contains(keyCode));
-
+    this.output.pressedButton = Array.from(this.elements.keys)
+      .find((keyElement) => keyElement.classList.contains(keyCode));
     this.output.pressedKeys.add(keyCode);
     this.changeLang(this.output.pressedKeys);
     this.output.pressedButton.classList.add('active');
-    if(keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+    if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
       const event = new Event('mousedown');
       this.output.pressedButton.dispatchEvent(event);
     } else {
-        const event = new Event('click');
-        this.output.pressedButton.dispatchEvent(event);
+      const event = new Event('click');
+      this.output.pressedButton.dispatchEvent(event);
     }
-
-
   },
 
   physicalKeyUp(keyCode) {
-    this.output.pressedButton = Array.from(this.elements.keys).find((keyElement) => keyElement.classList.contains(keyCode));
+    this.output.pressedButton = Array.from(this.elements.keys)
+      .find((keyElement) => keyElement.classList.contains(keyCode));
     this.output.pressedKeys.delete(keyCode);
     this.output.pressedButton.classList.remove('active');
 
-    if(keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+    if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
       const event = new Event('mouseup');
       this.output.pressedButton.dispatchEvent(event);
     }
-
   },
 
   changeLang(set) {
@@ -432,14 +436,18 @@ export const Keyboard = {
       } else {
         this.output.lang = 'en';
       }
-      for (let key of this.elements.keys) {
+      Array.from(this.elements.keys).forEach((key) => {
         if (key.textContent.length === 1) {
-          key.textContent = this.output.caps
-            ? this.keysLayouts[this.output.lang][Array.from(this.elements.keys).indexOf(key)].toUpperCase()
+          const buf = key;
+          buf.textContent = this.output.caps
+            ? this.keysLayouts[this.output.lang][Array.from(this.elements.keys).indexOf(key)]
+              .toUpperCase()
             : this.keysLayouts[this.output.lang][Array.from(this.elements.keys).indexOf(key)];
         }
-      }
+      });
     }
   },
 
 };
+
+export default Keyboard;
