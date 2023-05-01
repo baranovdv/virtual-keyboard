@@ -142,3 +142,8 @@ button {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
 }
+
+.main__disclaimer {
+  text-align: center;
+  color: #333;
+}

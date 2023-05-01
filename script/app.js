@@ -7,6 +7,7 @@ const CssClasses = {
   MAIN: 'main',
   TEXTAREA: 'main__output',
   HEADER: 'header__title',
+  DISCLAIMER: 'main__disclaimer',
   KEYBOARD: 'keyboard',
   KEY: 'keyboard__key',
   KEY_MEDIUM: 'keyboard__key_med',
@@ -117,16 +118,12 @@ const Keyboard = {
 
     document.addEventListener('keydown', (event) => {
       event.preventDefault();
-      console.log(event.key, event.code);
-      // this.physicalKeyDown(event.key.trim() ? event.key : event.code);
       this.physicalKeyDown(event.code);
     });
 
     document.addEventListener('keyup', (event) => {
       event.preventDefault();
       this.physicalKeyUp(event.code);
-      // this.physicalKeyUp(event.key.trim() ? event.key : event.code);
-      // console.log(event.code, event.key);
     });
   },
 
@@ -145,11 +142,19 @@ const Keyboard = {
     return header;
   },
 
+  createDisclamer() {
+    const disclaimer = document.createElement('h3');
+    disclaimer.innerHTML = 'Keyboard for mac <br> Language change - control(left) + option(left) for mac or control(left) + alt(left) for win';
+    disclaimer.classList.add(CssClasses.DISCLAIMER);
+    return disclaimer;
+  },
+
   createMain() {
     const main = document.createElement('main');
     main.classList.add(CssClasses.MAIN);
     main.appendChild(this.createTextarea());
     main.appendChild(this.elements.keyboardContainer);
+    main.appendChild(this.createDisclamer());
     return main;
   },
 
@@ -157,6 +162,7 @@ const Keyboard = {
     const textarea = document.createElement('textarea');
     textarea.setAttribute('rows', '3');
     textarea.setAttribute('value', '');
+    textarea.setAttribute('autofocus','');
     textarea.classList.add(CssClasses.TEXTAREA);
     return textarea;
   },
@@ -184,6 +190,14 @@ const Keyboard = {
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_UP);
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
+        keyElement.addEventListener('click', () => {
+          if(this.output.shift) {
+            this.output.textarea.selectionStart = 0;
+          } else {
+            this.output.textarea.selectionEnd = 0;
+          }
+          this.output.textarea.focus();
+        });
         break;
 
       case 'al':
@@ -191,6 +205,15 @@ const Keyboard = {
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_LEFT);
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
+        keyElement.addEventListener('click', () => {
+          if(this.output.shift) {
+            this.output.textarea.selectionStart > 0 ? this.output.textarea.selectionStart-- : this.output.textarea.selectionStart = 0;
+          } else {
+              this.output.textarea.selectionEnd = this.output.textarea.selectionStart;
+              this.output.textarea.selectionEnd > 0 ? this.output.textarea.selectionEnd-- : this.output.textarea.selectionEnd = 0;
+            }
+          this.output.textarea.focus();
+        });
         break;
 
       case 'ar':
@@ -198,6 +221,15 @@ const Keyboard = {
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_RIGHT);
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
+        keyElement.addEventListener('click', () => {
+          if(this.output.shift) {
+            this.output.textarea.selectionEnd < this.output.textarea.value.length ? this.output.textarea.selectionEnd++ : this.output.textarea.selectionEnd = this.output.textarea.value.length;
+          } else {
+              this.output.textarea.selectionStart = this.output.textarea.selectionEnd;
+              this.output.textarea.selectionStart < this.output.textarea.value.length ? this.output.textarea.selectionStart++ : this.output.textarea.selectionStart = this.output.textarea.value.length;
+            }
+          this.output.textarea.focus();
+        });
         break;
 
       case 'ad':
@@ -205,21 +237,31 @@ const Keyboard = {
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_DOWN);
         keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
         keyElement.appendChild(i);
+        keyElement.addEventListener('click', () => {
+          if(this.output.shift) {
+            this.output.textarea.selectionEnd = this.output.textarea.value.length;
+          } else {
+            this.output.textarea.selectionStart = this.output.textarea.value.length;
+          }
+          this.output.textarea.focus();
+        });
         break;
 
       case 'delete':
         keyElement.classList.add(CssClasses.KEY_MEDIUM);
         keyElement.textContent = key;
-        keyElement.addEventListener('mousedown', () => {
-          this.output.textarea.value = this.output.textarea.value.slice(0, -1);
+        keyElement.addEventListener('click', () => {
+          this.deleteData();
+          this.output.textarea.focus();
         });
         break;
 
       case 'tab':
         keyElement.classList.add(CssClasses.KEY_MEDIUM);
         keyElement.textContent = key;
-        keyElement.addEventListener('mousedown', (event) => {
+        keyElement.addEventListener('click', () => {
           this.inputData('	');
+          this.output.textarea.focus();
         });
         break;
 
@@ -227,16 +269,18 @@ const Keyboard = {
         keyElement.classList.add(CssClasses.KEY_BIG, CssClasses.KEY_CAPS);
         keyElement.textContent = key;
 
-        keyElement.addEventListener('mousedown', () => {
+        keyElement.addEventListener('click', () => {
           this.toggleCaps();
+          this.output.textarea.focus();
         });
         break;
 
       case 'return':
         keyElement.classList.add(CssClasses.KEY_BIG);
         keyElement.textContent = key;
-        keyElement.addEventListener('mousedown', () => {
+        keyElement.addEventListener('click', () => {
           this.inputData('\n');
+          this.output.textarea.focus();
         });
         break;
 
@@ -278,8 +322,9 @@ const Keyboard = {
 
       case 'space':
         keyElement.classList.add(CssClasses.KEY_EXTRA_BIG);
-        keyElement.addEventListener('mousedown', () => {
+        keyElement.addEventListener('click', () => {
           this.inputData(' ');
+          this.output.textarea.focus();
         });
         break;
 
@@ -289,8 +334,9 @@ const Keyboard = {
 
       default:
         keyElement.textContent = key;
-        keyElement.addEventListener('mousedown', () => {
+        keyElement.addEventListener('click', () => {
           this.inputData(keyElement.textContent);
+          this.output.textarea.focus();
         });
         break;
     }
@@ -311,8 +357,6 @@ const Keyboard = {
   toggleCaps() {
     this.output.caps = !this.output.caps;
     this.elements.keyboardContainer.querySelector(`.${CssClasses.KEY_CAPS}`).classList.toggle('on');
-    console.log(this.output.caps);
-    // this.output.shift = !this.output.shift;
     for (let key of this.elements.keys) {
       if (key.textContent.length === 1) {
         key.textContent = this.output.caps ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
@@ -349,7 +393,33 @@ const Keyboard = {
   },
 
   inputData(data) {
-    this.output.textarea.value += data;
+    let string = this.output.textarea.value;
+    let start = this.output.textarea.selectionStart;
+    let end = this.output.textarea.selectionEnd;
+
+    string = string.slice(0,start) + data + string.slice(end); 
+    this.output.textarea.value = string;
+    this.output.textarea.selectionStart = start + data.length;
+    this.output.textarea.selectionEnd = start === end ? end + data.length : this.output.textarea.selectionStart;
+    
+  },
+
+  deleteData() {
+    let string = this.output.textarea.value;
+    let start = this.output.textarea.selectionStart;
+    let end = this.output.textarea.selectionEnd;
+
+    if(start === end) {
+      string = string.slice(0,start-1) + string.slice(end);
+      this.output.textarea.value = string;
+      this.output.textarea.selectionStart = start - 1;
+      this.output.textarea.selectionEnd = end - 1;
+    } else {
+      string = string.slice(0,start) + string.slice(end);
+      this.output.textarea.value = string;
+      this.output.textarea.selectionStart = start;
+      this.output.textarea.selectionEnd = end - (end - start);
+    }
   },
 
   physicalKeyDown(keyCode) {
@@ -357,22 +427,30 @@ const Keyboard = {
 
     this.output.pressedKeys.add(keyCode);
     this.changeLang(this.output.pressedKeys);
-
-    console.log(this.output.pressedKeys);
-
     this.output.pressedButton.classList.add('active');
-    const event = new Event('mousedown');
-    this.output.pressedButton.dispatchEvent(event);
+    if(keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+      const event = new Event('mousedown');
+      this.output.pressedButton.dispatchEvent(event);
+    } else {
+        const event = new Event('click');
+        this.output.pressedButton.dispatchEvent(event);
+    }
+
+
   },
 
   physicalKeyUp(keyCode) {
     this.output.pressedButton = Array.from(this.elements.keys).find((keyElement) => keyElement.classList.contains(keyCode));
     this.output.pressedKeys.delete(keyCode);
-    console.log(this.output.pressedKeys);
+    // console.log(this.output.pressedKeys);
 
     this.output.pressedButton.classList.remove('active');
-    const event = new Event('mouseup');
-    this.output.pressedButton.dispatchEvent(event);
+
+    if(keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+      const event = new Event('mouseup');
+      this.output.pressedButton.dispatchEvent(event);
+    }
+
   },
 
   changeLang(set) {
