@@ -8,6 +8,7 @@ button {
   padding: 0;
   margin: 0;
   border: 0;
+  outline: 0;
   background-color: transparent;
   cursor: pointer;
 }
@@ -44,6 +45,7 @@ button {
 }
 
 .keyboard__key {
+  position: relative;
   display: inline-flex;
   width: 5%;
   height: 40px;
@@ -62,7 +64,26 @@ button {
 }
 
 .keyboard__key:active {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 100, 0.5);
+}
+
+.keyboard__key.active {
+  background-color: rgba(0, 0, 100, 0.5);
+}
+
+.keyboard__key_caps::after {
+  position: absolute;
+  content: '';
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: grey;
+}
+
+.keyboard__key_caps.on::after {
+  background-color: lightgreen;
 }
 
 .keyboard__key_med {
