@@ -1,4 +1,4 @@
-import { Keyboard } from './keyboard.js';
+import Keyboard from './keyboard.js';
 import { setLocalStorage, getLocalStorage } from './localStorage.js';
 
 window.addEventListener('DOMContentLoaded', () => {

@@ -3,5 +3,5 @@ export function setLocalStorage(name, item) {
 }
 
 export function getLocalStorage(name) {
-      return localStorage.getItem(name);
+  return localStorage.getItem(name);
 }
