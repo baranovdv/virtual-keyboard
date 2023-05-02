@@ -1,3 +1,4 @@
+import Key from './keyClass.js';
 import { CssClasses, KeyboardConst } from './consts.js';
 
 const Keyboard = {
@@ -151,179 +152,171 @@ const Keyboard = {
   },
 
   createKey(key) {
-    const keyElement = document.createElement('button');
-    keyElement.classList.add(CssClasses.KEY);
+    const keyElement = new Key({
+      object: Keyboard,
+      name: key,
+      class: [CssClasses.KEY],
+      event: { click: this.inputData },
+    });
+
     let i = '';
     switch (key) {
       case 'au':
+        keyElement.name = '';
+        keyElement.addClass(CssClasses.KEYBOARD_ARROW);
+
         i = document.createElement('i');
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_UP);
-        keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
-        keyElement.appendChild(i);
-        keyElement.addEventListener('click', () => {
-          if (this.output.shift) {
-            this.output.textarea.selectionStart = 0;
-          } else {
-            this.output.textarea.selectionEnd = 0;
-          }
-          this.output.textarea.focus();
-        });
+
+        keyElement.child = i;
+        keyElement.event.click = this.arrowUp;
         break;
 
       case 'al':
+        keyElement.name = '';
+        keyElement.addClass(CssClasses.KEYBOARD_ARROW);
+
         i = document.createElement('i');
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_LEFT);
-        keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
-        keyElement.appendChild(i);
-        keyElement.addEventListener('click', () => {
-          if (this.output.shift) {
-            if (this.output.textarea.selectionStart > 0) {
-              this.output.textarea.selectionStart -= 1;
-            }
-          } else {
-            this.output.textarea.selectionEnd = this.output.textarea.selectionStart;
-            if (this.output.textarea.selectionEnd > 0) {
-              this.output.textarea.selectionEnd -= 1;
-            }
-          }
-          this.output.textarea.focus();
-        });
+
+        keyElement.child = i;
+        keyElement.event.click = this.arrowLeft;
         break;
 
       case 'ar':
+        keyElement.name = '';
+        keyElement.addClass(CssClasses.KEYBOARD_ARROW);
+
         i = document.createElement('i');
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_RIGHT);
-        keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
-        keyElement.appendChild(i);
-        keyElement.addEventListener('click', () => {
-          if (this.output.shift) {
-            if (this.output.textarea.selectionEnd < this.output.textarea.value.length) {
-              this.output.textarea.selectionEnd += 1;
-            }
-          } else {
-            this.output.textarea.selectionStart = this.output.textarea.selectionEnd;
-            if (this.output.textarea.selectionStart < this.output.textarea.value.length) {
-              this.output.textarea.selectionStart += 1;
-            }
-          }
-          this.output.textarea.focus();
-        });
+
+        keyElement.child = i;
+        keyElement.event.click = this.arrowRight;
         break;
 
       case 'ad':
+        keyElement.name = '';
+        keyElement.addClass(CssClasses.KEYBOARD_ARROW);
+
         i = document.createElement('i');
         i.classList.add(CssClasses.KEY_ARROW, CssClasses.KEY_ARROW_DOWN);
-        keyElement.classList.add(CssClasses.KEYBOARD_ARROW);
-        keyElement.appendChild(i);
-        keyElement.addEventListener('click', () => {
-          if (this.output.shift) {
-            this.output.textarea.selectionEnd = this.output.textarea.value.length;
-          } else {
-            this.output.textarea.selectionStart = this.output.textarea.value.length;
-          }
-          this.output.textarea.focus();
-        });
+
+        keyElement.child = i;
+        keyElement.event.click = this.arrowDown;
         break;
 
       case 'delete':
-        keyElement.classList.add(CssClasses.KEY_MEDIUM);
-        keyElement.textContent = key;
-        keyElement.addEventListener('click', () => {
-          this.deleteData();
-          this.output.textarea.focus();
-        });
+        keyElement.addClass(CssClasses.KEY_MEDIUM);
+        keyElement.event.click = this.deleteData;
         break;
 
       case 'tab':
-        keyElement.classList.add(CssClasses.KEY_MEDIUM);
-        keyElement.textContent = key;
-        keyElement.addEventListener('click', () => {
-          this.inputData('\t');
-          this.output.textarea.focus();
-        });
+        keyElement.addClass(CssClasses.KEY_MEDIUM);
+        keyElement.data = '\t';
         break;
 
       case 'capslock':
-        keyElement.classList.add(CssClasses.KEY_BIG, CssClasses.KEY_CAPS);
-        keyElement.textContent = key;
-
-        keyElement.addEventListener('click', () => {
-          this.toggleCaps();
-          this.output.textarea.focus();
-        });
+        keyElement.addClass(CssClasses.KEY_BIG, CssClasses.KEY_CAPS);
+        keyElement.event.click = this.toggleCaps;
         break;
 
       case 'return':
-        keyElement.classList.add(CssClasses.KEY_BIG);
-        keyElement.textContent = key;
-        keyElement.addEventListener('click', () => {
-          this.inputData('\n');
-          this.output.textarea.focus();
-        });
+        keyElement.addClass(CssClasses.KEY_BIG);
+        keyElement.data = '\n';
         break;
 
       case 'shift-l':
-        keyElement.classList.add(CssClasses.KEY_BIG);
-        keyElement.textContent = key.slice(0, -2);
-        keyElement.addEventListener('mousedown', () => {
-          this.toggleShift();
-        });
-        keyElement.addEventListener('mouseup', () => {
-          this.toggleShift();
-        });
+        keyElement.addClass(CssClasses.KEY_BIG);
+        keyElement.name = key.slice(0, -2);
+        keyElement.event = {
+          mousedown: this.toggleShift,
+          mouseup: this.toggleShift,
+        };
         break;
 
       case 'shift-r':
-        keyElement.classList.add(CssClasses.KEY_BIG);
-        keyElement.textContent = key.slice(0, -2);
-        keyElement.addEventListener('mousedown', () => {
-          this.toggleShift();
-        });
-        keyElement.addEventListener('mouseup', () => {
-          this.toggleShift();
-        });
+        keyElement.addClass(CssClasses.KEY_BIG);
+        keyElement.name = key.slice(0, -2);
+        keyElement.event = {
+          mousedown: this.toggleShift,
+          mouseup: this.toggleShift,
+        };
         break;
 
       case 'control':
-        keyElement.classList.add(CssClasses.KEY_MEDIUM);
-        keyElement.textContent = key;
+        keyElement.addClass(CssClasses.KEY_MEDIUM);
+        keyElement.event = '';
         break;
 
       case 'option':
-        keyElement.textContent = key;
+        keyElement.event = '';
         break;
 
       case 'command':
-        keyElement.classList.add(CssClasses.KEY_MEDIUM);
-        keyElement.textContent = key;
+        keyElement.addClass(CssClasses.KEY_MEDIUM);
+        keyElement.event = '';
         break;
 
       case 'space':
-        keyElement.classList.add(CssClasses.KEY_EXTRA_BIG);
-        keyElement.addEventListener('click', () => {
-          this.inputData(' ');
-          this.output.textarea.focus();
-        });
+        keyElement.name = '';
+        keyElement.addClass(CssClasses.KEY_EXTRA_BIG);
+        keyElement.data = ' ';
         break;
 
       case ' ':
-        keyElement.classList.add(CssClasses.KEY_BLANK);
+        keyElement.addClass(CssClasses.KEY_BLANK);
         break;
 
       default:
-        keyElement.textContent = key;
-        keyElement.addEventListener('click', () => {
-          this.inputData(keyElement.textContent);
-          this.output.textarea.focus();
-        });
         break;
     }
 
-    if (key.length > 2) {
-      keyElement.classList.add(CssClasses.KEY_DARK);
+    if (keyElement.name.length > 2) {
+      keyElement.addClass([CssClasses.KEY_DARK]);
     }
+    return keyElement.createKey();
+  },
 
-    return keyElement;
+  arrowUp() {
+    if (this.output.shift) {
+      this.output.textarea.selectionStart = 0;
+    } else {
+      this.output.textarea.selectionEnd = 0;
+    }
+  },
+
+  arrowLeft() {
+    if (this.output.shift) {
+      if (this.output.textarea.selectionStart > 0) {
+        this.output.textarea.selectionStart -= 1;
+      }
+    } else {
+      this.output.textarea.selectionEnd = this.output.textarea.selectionStart;
+      if (this.output.textarea.selectionEnd > 0) {
+        this.output.textarea.selectionEnd -= 1;
+      }
+    }
+  },
+
+  arrowRight() {
+    if (this.output.shift) {
+      if (this.output.textarea.selectionEnd < this.output.textarea.value.length) {
+        this.output.textarea.selectionEnd += 1;
+      }
+    } else {
+      this.output.textarea.selectionStart = this.output.textarea.selectionEnd;
+      if (this.output.textarea.selectionStart < this.output.textarea.value.length) {
+        this.output.textarea.selectionStart += 1;
+      }
+    }
+  },
+
+  arrowDown() {
+    if (this.output.shift) {
+      this.output.textarea.selectionEnd = this.output.textarea.value.length;
+    } else {
+      this.output.textarea.selectionStart = this.output.textarea.value.length;
+    }
   },
 
   enumKeys() {
